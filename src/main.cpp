@@ -155,36 +155,25 @@ int main(void)
     Texture texture("/home/steel/visual_studio/c++_projects/opengl_projects/renderer/src/texture_wood.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     texture.texUnit(shaderprogram, "tex0", 0);
     texture.Unbind();
+
+    float rotation = 0.0f; 
+    double prevtime = glfwGetTime();
+
+        Camera camera(width,height, glm::vec3  (0.0f,0.0f,2.0f));
+
+
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+        glClearColor(0.0f, 0.7f, 1.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderprogram.Activate();
         vao.Bind();
         texture.Bind();
-        glUniform1f(uniID, 0.4);
-        double currtime = glfwGetTime();
-        if (currtime - prevtime >= 1 / 60)
-        {
-            rotation += 0.5f;
-            prevtime = currtime;
-        }
-        glm::mat4 proj = glm::mat4(1.0f);
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 model= glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 1.0f, 0.0f));
-        // model = glm::scale (model,glm::vec3(0.5f,0.5f,0.5f));
-        view = glm::translate(view, glm::vec3(0, -0.5f, -2.0f));
-        proj = glm::perspective(glm::radians(45.0f), (float)(width / height), 0.1f, 100.0f);
-
-        int modelLoc = glGetUniformLocation(shaderprogram.ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        int projLoc = glGetUniformLocation(shaderprogram.ID, "view");
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-        int viewLoc = glGetUniformLocation(shaderprogram.ID, "proj");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        camera.move(45.0f,0.1f,100.0f, shaderprogram, "camMatrix");
+        camera.inputs(window);
+        // glUniform1f(uniID, 0.4);s
         // glUseProgram(shaderprogram);
         // glDrawElements(GL_TRIANGLES, sizeof(vertex) / sizeof(vertex[0]), GL_UNSIGNED_INT, NULL);
         glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
