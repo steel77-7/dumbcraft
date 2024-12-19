@@ -1,6 +1,7 @@
 #include "Header_files/Camera.h"
 
 float speed = 0.1f;
+float sensitivity = 0;
 // initialization here
 Camera::Camera(int width, int height, glm::vec3 position)
 {
@@ -28,31 +29,52 @@ void Camera::inputs(GLFWwindow *window)
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        Position += speed *-glm::normalize(glm::cross( Orientation,Up));
+        Position += speed * -glm::normalize(glm::cross(Orientation, Up));
     }
-     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
         Position += speed * -Orientation;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        Position += speed * glm::normalize(glm::cross( Orientation,Up));
+        Position += speed * glm::normalize(glm::cross(Orientation, Up));
     }
-     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        Position += speed *Up;
+        Position += speed * Up;
     }
-     if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
     {
         Position += speed * -Up;
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
         speed = 0.4f;
     }
-     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
     {
         speed = 0.1f;
     }
-    
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        double x, y;
+
+        // gettinh the cursor positins
+
+        glfwGetCursorPos(window, &x, &y);
+        float rotx = sensitivity * (float)(y - (height / 2) / height);
+        float roty = sensitivity * (float)(x - (height / 2) / height);
+/* 
+        glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotx), glm::normalize(glm::cross(Orientation, Up)));
+        Orientation = newOrientation;
+        Orientation = glm::rotate(Orientation, glm::radians(-roty), Up); */
+
+        glfwSetCursorPos(window, (width / 2), height / 2);
+    }
+
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
 }
