@@ -1,7 +1,7 @@
 #include "Header_files/Camera.h"
 
 float speed = 0.1f;
-float sensitivity = 0;
+float sensitivity = 200.0f;
 // initialization here
 Camera::Camera(int width, int height, glm::vec3 position)
 {
@@ -55,20 +55,30 @@ void Camera::inputs(GLFWwindow *window)
     {
         speed = 0.1f;
     }
+
+    // mouse movements
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
         double x, y;
 
         // gettinh the cursor positins
 
         glfwGetCursorPos(window, &x, &y);
-        float rotx = sensitivity * (float)(y - (height / 2) / height);
-        float roty = sensitivity * (float)(x - (height / 2) / height);
-/* 
+
+        // deltas for x and y axis
+        float rotx = sensitivity * (float)((y - (height / 2)) / height)*200;
+        // float roty = sensitivity * (float)(x - (width / 2) / width)
+        float roty = sensitivity * (float)((x - (width / 2)) / width) *200;
+
         glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotx), glm::normalize(glm::cross(Orientation, Up)));
-        Orientation = newOrientation;
-        Orientation = glm::rotate(Orientation, glm::radians(-roty), Up); */
+
+        if (!((glm::angle(newOrientation, Up) <= glm::radians(5.0f) or glm::angle(newOrientation, -Up) <= glm::radians(5.0f))))
+        {
+            Orientation = newOrientation;
+        }
+        Orientation = glm::rotate(Orientation, glm::radians(-roty), Up);
 
         glfwSetCursorPos(window, (width / 2), height / 2);
     }
